@@ -1,0 +1,57 @@
+/* Custom styles for hotel detail component */
+
+/* Google Maps styling */
+.map-container {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+google-map {
+  border-radius: 0.5rem;
+}
+
+.rating-bar {
+  transition: width 0.5s ease-in-out;
+}
+
+.gallery-thumbnail {
+  transition: transform 0.2s ease-in-out;
+}
+
+.gallery-thumbnail:hover {
+  transform: scale(1.05);
+}
+
+.amenity-icon {
+  width: 2rem;
+  height: 2rem;
+  background-color: #dbeafe;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #dbeafe;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+.hotel-card-hover {
+  transition: all 0.3s ease-in-out;
+}
+
+.hotel-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}

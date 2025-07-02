@@ -1,0 +1,31 @@
+/* Home component styles */
+
+/* Google Maps styling */
+.map-container {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Map controls styling */
+google-map {
+  border-radius: 0.5rem;
+}
+
+/* Custom map marker info window styling */
+.map-info-window {
+  font-family: 'Inter', sans-serif;
+  max-width: 200px;
+}
+
+.map-info-window h4 {
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.map-info-window p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 12px;
+}
