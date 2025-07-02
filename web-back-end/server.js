@@ -2,8 +2,16 @@
 require('dotenv').config();
 const express = require('express');
 const passport = require('./config/passport');
+const cors = require('cors');
 
 const app = express();
+
+// CORS ayarları (geliştirme ve deploy için güvenli)
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || '*';
+app.use(cors({
+  origin: CLIENT_ORIGIN,
+  credentials: true,
+}));
 
 // JSON gövdelerini parse et
 app.use(express.json());
@@ -12,7 +20,11 @@ app.use(express.json());
 app.use(passport.initialize());
 
 // Statik klasör: yüklenen dosyalar
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads', {
+  setHeaders: (res) => {
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+}));
 
 // Health-check
 app.get('/', (_req, res) => res.send('API is running'));
@@ -45,6 +57,11 @@ app.use('/upload', uploadRoutes);
 
 // Hata yakalama
 app.use(errorMiddleware);
+
+// 404 fallback (frontend SPA için veya API için)
+app.use((req, res) => {
+  res.status(404).json({ message: 'Kaynak bulunamadı.' });
+});
 
 // Sunucuyu başlat
 const PORT = process.env.PORT || 5050;
