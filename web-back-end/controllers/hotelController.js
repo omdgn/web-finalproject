@@ -82,7 +82,19 @@ exports.getHotelById = async (req, res, next) => {
       return res.status(404).json({ message: 'Otel bulunamadı.' });
     }
 
+    // Yorumları ve kullanıcı bilgilerini getir
     const comments = await Comment.findByHotel(id);
+    const User = require('../models/userModel');
+    const commentsWithUser = await Promise.all(
+      comments.map(async c => {
+        const user = await User.findById(c.user_id);
+        return {
+          ...c,
+          user: user ? { name: user.name } : null
+        };
+      })
+    );
+
     const commentCount = comments.length;
     const averageRating =
       commentCount > 0
@@ -96,7 +108,7 @@ exports.getHotelById = async (req, res, next) => {
 
     res.json({
       ...hotel,
-      comments,
+      comments: commentsWithUser,
       commentCount,
       averageRating: Number(averageRating.toFixed(2)),
       distribution,
