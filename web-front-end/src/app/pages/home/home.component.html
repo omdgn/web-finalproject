@@ -1,0 +1,266 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Navigation Header -->
+  <nav class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <h1 class="text-xl font-bold text-blue-600">Hotel Booking</h1>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div *ngIf="!currentUser" class="flex space-x-2">
+            <a routerLink="/login" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+              Giriş Yap
+            </a>
+            <a routerLink="/register" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300">
+              Kayıt Ol
+            </a>
+          </div>
+          
+          <div *ngIf="currentUser" class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <img 
+                *ngIf="currentUser.photoUrl" 
+                [src]="currentUser.photoUrl" 
+                [alt]="currentUser.firstName"
+                class="h-8 w-8 rounded-full"
+              >
+              <div *ngIf="!currentUser.photoUrl" class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                <span class="text-white text-sm font-medium">
+                  {{ ((currentUser.firstName || currentUser.name) || 'U').charAt(0).toUpperCase() }}
+                </span>
+              </div>
+              <span class="text-gray-700 text-sm font-medium">
+                {{ currentUser.firstName && currentUser.lastName 
+                   ? currentUser.firstName + ' ' + currentUser.lastName 
+                   : (currentUser.name || 'User') }}
+              </span>
+            </div>
+            <button 
+              (click)="onLogout()" 
+              class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
+            >
+              Çıkış Yap
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Welcome Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        <span *ngIf="currentUser">Hoş geldiniz, {{ currentUser.firstName }}!</span>
+        <span *ngIf="!currentUser">Otel Rezervasyonu</span>
+      </h1>
+      <p class="text-lg text-gray-600 mb-8">
+        <span *ngIf="currentUser">Hayalinizdeki oteli bulun ve unutulmaz bir tatil yaşayın.</span>
+        <span *ngIf="!currentUser">Giriş yapın ve özel üye fiyatlarından yararlanın.</span>
+      </p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-6">Otel Arayın</h2>
+      <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Şehir</label>
+            <select formControlName="city" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Tüm Şehirler</option>
+              <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Giriş Tarihi</label>
+            <input 
+              type="date" 
+              formControlName="checkInDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Çıkış Tarihi</label>
+            <input 
+              type="date" 
+              formControlName="checkOutDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Misafir Sayısı</label>
+            <select formControlName="guestCount" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="1">1 Misafir</option>
+              <option value="2">2 Misafir</option>
+              <option value="3">3 Misafir</option>
+              <option value="4">4 Misafir</option>
+              <option value="5">5+ Misafir</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Price Range Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Fiyat (₺)</label>
+            <input 
+              type="number" 
+              formControlName="minPrice"
+              placeholder="0"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Maksimum Fiyat (₺)</label>
+            <input 
+              type="number" 
+              formControlName="maxPrice"
+              placeholder="10000"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+          </div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button 
+            type="submit" 
+            [disabled]="loading"
+            class="flex-1 sm:flex-initial bg-blue-600 text-white px-8 py-3 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+          >
+            <span *ngIf="!loading">Otel Ara</span>
+            <span *ngIf="loading">Aranıyor...</span>
+          </button>
+          
+          <button 
+            type="button" 
+            (click)="toggleMapView()"
+            class="flex-1 sm:flex-initial bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            {{ showMapView ? 'Liste Görünümü' : 'Haritada Göster' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Authentication Notice for Non-Users -->
+    <div *ngIf="!currentUser" class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-blue-800">Üye Fiyatları</h3>
+          <div class="mt-2 text-sm text-blue-700">
+            <p>Özel üye fiyatlarından yararlanmak için <a routerLink="/login" class="font-medium underline">giriş yapın</a> veya <a routerLink="/register" class="font-medium underline">hesap oluşturun</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map View Toggle -->
+    <div *ngIf="showMapView" class="bg-white rounded-lg shadow-md p-8 mb-8">
+      <h3 class="text-xl font-semibold text-gray-900 mb-4">Harita Görünümü</h3>
+      <div class="h-96 rounded-lg overflow-hidden map-container">
+        <google-map
+          [options]="mapOptions"
+          [width]="'100%'"
+          [height]="'100%'">
+          <map-marker 
+            *ngFor="let marker of hotelMarkers" 
+            [position]="marker.position"
+            [options]="markerOptions"
+            (mapClick)="onMarkerClick(marker)"
+            [title]="marker.hotel.name + ' - ₺' + marker.hotel.price">
+          </map-marker>
+        </google-map>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm text-gray-600">{{ filteredHotels.length }} otel gösteriliyor</p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-12">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+      <p class="mt-4 text-gray-600">Oteller yükleniyor...</p>
+    </div>
+
+    <!-- Hotel Cards -->
+    <div *ngIf="!loading && !showMapView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let hotel of filteredHotels" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+        <div class="h-48 bg-cover bg-center" [style.background-image]="'url(' + hotel.imageUrl + ')'">
+          <div *ngIf="hotel.discount" class="bg-red-500 text-white px-3 py-1 rounded-br-lg inline-block">
+            %{{ hotel.discount.percentage }} İndirim
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ hotel.name }}</h3>
+          <p class="text-sm text-gray-600 mb-2">{{ hotel.city }}, {{ hotel.country }}</p>
+          
+          <div class="flex items-center mb-3">
+            <div class="flex" [class.text-yellow-400]="hotel.commentCount > 0" [class.text-gray-300]="hotel.commentCount === 0">
+              <svg *ngFor="let star of [1,2,3,4,5]" 
+                   class="w-4 h-4 fill-current" 
+                   [class.text-gray-300]="hotel.commentCount === 0 || star > hotel.rating"
+                   viewBox="0 0 20 20">
+                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+              </svg>
+            </div>
+            <span class="ml-2 text-sm text-gray-600">
+              <span *ngIf="hotel.commentCount > 0">{{ hotel.rating }} ({{ hotel.commentCount }} değerlendirme)</span>
+              <span *ngIf="hotel.commentCount === 0">Henüz değerlendirme yok</span>
+            </span>
+          </div>
+
+          <!-- Amenities -->
+          <div class="mb-4">
+            <div class="flex flex-wrap gap-1">
+              <span *ngFor="let amenity of hotel.amenities.slice(0, 3)" 
+                    class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                {{ amenity }}
+              </span>
+              <span *ngIf="hotel.amenities.length > 3" 
+                    class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                +{{ hotel.amenities.length - 3 }} more
+              </span>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <div>
+              <div *ngIf="currentUser">
+                <span *ngIf="hotel.discount" class="text-sm text-gray-500 line-through">₺{{ hotel.discount.originalPrice }}</span>
+                <span class="text-2xl font-bold text-blue-600">₺{{ hotel.price }}</span>
+                <span class="text-sm text-gray-500">/gece</span>
+              </div>
+              <div *ngIf="!currentUser" class="text-sm text-gray-600">
+                Üye fiyatı için giriş yapın
+              </div>
+            </div>
+            <button 
+              (click)="goToHotelDetail(hotel.id)"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              Detaylar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!loading && filteredHotels.length === 0" class="text-center py-12">
+      <div class="text-6xl text-gray-300 mb-4">🏨</div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Otel Bulunamadı</h3>
+      <p class="text-gray-600">Arama kriterlerinize uygun otel bulunamadı. Lütfen farklı filtreler deneyin.</p>
+    </div>
+  </main>
+</div>

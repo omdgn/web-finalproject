@@ -1,0 +1,189 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <button 
+          (click)="goBackToSearch()"
+          class="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Arama Sayfasına Dön
+        </button>
+        
+        <h1 class="text-xl font-semibold text-gray-900">Arama Sonuçları</h1>
+        
+        <div class="w-32"></div> <!-- Spacer for centering -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Search Summary -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-medium text-gray-900">{{ getFormattedSearchSummary() }}</h2>
+          <p class="text-sm text-gray-600">{{ hotels.length }} otel bulundu</p>
+        </div>
+        
+        <!-- View Toggle and Filters -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Map Toggle Button -->
+          <button
+            (click)="toggleMapView()"
+            class="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            {{ showMapView ? 'Liste Görünümü' : 'Haritada Göster' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+
+    <!-- Map View -->
+    <div *ngIf="showMapView && !loading" class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Harita Görünümü</h3>
+      <div class="relative h-96 rounded-lg overflow-hidden map-container">
+        <google-map
+          [options]="mapOptions"
+          [width]="'100%'"
+          [height]="'100%'">
+          <map-marker 
+            *ngFor="let marker of hotelMarkers" 
+            [position]="marker.position"
+            [options]="markerOptions"
+            (mapClick)="onMarkerClick(marker)"
+            [title]="marker.hotel.name + ' - ₺' + marker.hotel.price">
+          </map-marker>
+        </google-map>
+        
+        <!-- Map Legend -->
+        <div class="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3">
+          <div class="flex items-center space-x-2">
+            <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+            <span class="text-sm text-gray-700">{{ hotels.length }} Otel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hotels Grid -->
+    <div *ngIf="!showMapView && !loading">
+      <!-- Empty State -->
+      <div *ngIf="hotels.length === 0" class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Arama kriterlerinize uygun otel bulunamadı</h3>
+        <p class="mt-1 text-sm text-gray-500">Farklı tarih veya şehir seçerek tekrar deneyin</p>
+      </div>
+
+      <!-- Hotels Grid -->
+      <div *ngIf="hotels.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div 
+          *ngFor="let hotel of hotels" 
+          (click)="onHotelClick(hotel.id)"
+          class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 overflow-hidden transform hover:-translate-y-1">
+          
+          <!-- Hotel Image -->
+          <div class="relative h-48 overflow-hidden">
+            <img 
+              [src]="hotel.imageUrl" 
+              [alt]="hotel.name"
+              class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+            
+            <!-- Discount Badge -->
+            <div *ngIf="hotel.discount" class="absolute top-3 left-3">
+              <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                %{{ hotel.discount.percentage }} İndirim
+              </span>
+            </div>
+            
+            <!-- Favorite Button -->
+            <button class="absolute top-3 right-3 p-2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full transition-all">
+              <svg class="w-5 h-5 text-gray-600 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Hotel Info -->
+          <div class="p-4">
+            <!-- Name and Location -->
+            <div class="mb-3">
+              <h3 class="font-semibold text-lg text-gray-900 mb-1">{{ hotel.name }}</h3>
+              <p class="text-sm text-gray-600">{{ hotel.city }}, {{ hotel.country }}</p>
+            </div>
+
+            <!-- Rating -->
+            <div class="flex items-center mb-3">
+              <div class="flex items-center">
+                <span 
+                  *ngFor="let star of getStarArray(hotel.rating)" 
+                  [class.text-yellow-400]="hotel.commentCount > 0"
+                  [class.text-gray-300]="hotel.commentCount === 0 || star === 0">
+                  ★
+                </span>
+              </div>
+              <span class="ml-2 text-sm text-gray-600">
+                <span *ngIf="hotel.commentCount > 0">{{ hotel.rating }}/5 ({{ hotel.commentCount }} yorum)</span>
+                <span *ngIf="hotel.commentCount === 0">Henüz değerlendirme yok</span>
+              </span>
+            </div>
+
+            <!-- Amenities -->
+            <div class="mb-4">
+              <div class="flex flex-wrap gap-1">
+                <span 
+                  *ngFor="let amenity of hotel.amenities.slice(0, 3); let i = index" 
+                  class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                  {{ amenity }}
+                </span>
+                <span 
+                  *ngIf="hotel.amenities.length > 3" 
+                  class="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                  +{{ hotel.amenities.length - 3 }} diğer
+                </span>
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="flex items-center justify-between">
+              <div>
+                <div *ngIf="currentUser; else unauthenticatedPrice">
+                  <div *ngIf="hotel.discount" class="flex items-center gap-2">
+                    <span class="text-lg font-bold text-gray-900">₺{{ hotel.price }}</span>
+                    <span class="text-sm text-gray-500 line-through">₺{{ hotel.discount.originalPrice }}</span>
+                  </div>
+                  <span *ngIf="!hotel.discount" class="text-lg font-bold text-gray-900">₺{{ hotel.price }}</span>
+                  <span class="text-sm text-gray-600 block">gecelik</span>
+                </div>
+                
+                <ng-template #unauthenticatedPrice>
+                  <span class="text-sm text-blue-600 font-medium">Üye fiyatı için giriş yapın</span>
+                </ng-template>
+              </div>
+              
+              <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Detayları Gör
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

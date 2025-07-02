@@ -1,0 +1,73 @@
+/* Additional styles for search results component */
+.hotel-card-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hotel-card-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}
+
+.search-results-container {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Map marker styles */
+.map-marker {
+  transition: transform 0.2s ease-in-out;
+}
+
+.map-marker:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.map-marker .popup {
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.map-marker:hover .popup {
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+
+/* Google Maps styling */
+.map-container {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+google-map {
+  border-radius: 0.5rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .search-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .view-toggle {
+    align-self: flex-end;
+  }
+  
+  .map-marker .popup {
+    min-width: 12rem;
+  }
+}
