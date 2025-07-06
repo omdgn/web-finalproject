@@ -18,7 +18,7 @@
 
 ---
 
-# 🏨 Web Final Project
+# 🏨 Hotel-Booking-Project
 
 **Hotel Booking** uygulaması—tam yığın (full-stack) demo.
 
