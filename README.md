@@ -1,22 +1,5 @@
 
 <!-- PROJECT SHIELDS -->
-<!-- Replace with your own badges or remove what you don’t need -->
-<p align="center">
-  <a href="https://github.com/omdgn/web-finalproject/actions">
-    <img alt="Build Status" src="https://img.shields.io/github/workflow/status/omdgn/web-finalproject/CI?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/omdgn/web-finalproject/releases">
-    <img alt="Release" src="https://img.shields.io/github/v/release/omdgn/web-finalproject?style=for-the-badge" />
-  </a>
-  <a href="LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/omdgn/web-finalproject?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/omdgn/web-finalproject/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/omdgn/web-finalproject?style=for-the-badge" />
-  </a>
-</p>
-
----
 
 # 🏨 Hotel-Booking-Project
 
