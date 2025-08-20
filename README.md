@@ -6,7 +6,7 @@
 **Hotel Booking** uygulaması—tam yığın (full-stack) demo.
 
 - **Front-end** (`web-front-end`)  
-  TypeScript + HTML + CSS; React tabanlı SPA, Vercel deploy.  
+  Angular.js + HTML + CSS; React tabanlı SPA, Vercel deploy.  
 - **Back-end** (`web-back-end`)  
   Node.js + Express + TypeScript; PostgreSQL ile REST API.
 
